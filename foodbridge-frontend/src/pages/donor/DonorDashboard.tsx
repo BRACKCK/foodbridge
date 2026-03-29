@@ -1,160 +1,126 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 interface Donation {
-  id: number;
   food: string;
   quantity: string;
-  status: string;
+  expiry: string;
+  status?: string;
 }
 
-const DonorDashboard = () => {
-  const [donations, setDonations] = useState<Donation[]>([
-    {
-      id: 1,
-      food: "Rice & Beans",
-      quantity: "10 kg",
-      status: "Pending",
-    },
-  ]);
-
+function DonorDashboard() {
+  // 🔹 State for form
   const [formData, setFormData] = useState({
     food: "",
     quantity: "",
     expiry: "",
   });
 
-  // Handle input change
+  // 🔹 State for saved donations
+  const [donations, setDonations] = useState<Donation[]>([]);
+
+  // 🔹 Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.placeholder.toLowerCase().replace(" ", "")]: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
 
-  // Handle form submit
-  const handleSubmit = (e: React.FormEvent) => {
+  // ✅ THIS is where handleSubmit goes
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newDonation: Donation = {
-      id: donations.length + 1,
-      food: formData.food,
-      quantity: formData.quantity,
-      status: "Pending",
-    };
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/donations/",
+        formData
+      );
 
-    setDonations([...donations, newDonation]);
+      setDonations([...donations, response.data]);
 
-    // Clear form
-    setFormData({
-      food: "",
-      quantity: "",
-      expiry: "",
-    });
+      setFormData({
+        food: "",
+        quantity: "",
+        expiry: "",
+      });
+    } catch (error) {
+      console.error("Error saving donation:", error);
+    }
   };
 
+  // 🔹 Fetch existing donations
+  useEffect(() => {
+    axios.get("http://127.0.0.1:8000/api/donations/")
+      .then((res) => setDonations(res.data))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Donor Dashboard</h2>
+    <div className="container mt-5">
+      <h2>Donor Dashboard</h2>
 
-      {/* 🔹 Stats */}
-      <div className="row mb-4">
-        <div className="col-md-4">
-          <div className="card text-white bg-primary shadow">
-            <div className="card-body">
-              <h5>Total Donations</h5>
-              <h3>{donations.length}</h3>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* 🔹 FORM */}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="food"
+          placeholder="Food Item"
+          aria-label="Food Item"
+          className="form-control my-2"
+          value={formData.food}
+          onChange={handleChange}
+          required
+        />
 
-      {/* 🔹 Form */}
-      <div className="card mb-4 shadow">
-        <div className="card-body">
-          <h5 className="mb-3">Post a Donation</h5>
+        <input
+          type="text"
+          name="quantity"
+          placeholder="Quantity"
+          aria-label="Quantity"
+          className="form-control my-2"
+          value={formData.quantity}
+          onChange={handleChange}
+          required
+        />
 
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-4 mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Food"
-                  value={formData.food}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+        <input
+          type="datetime-local"
+          name="expiry"
+          placeholder="Expiry Date"
+          aria-label="Expiry Date"
+          className="form-control my-2"
+          value={formData.expiry}
+          onChange={handleChange}
+          required
+        />
 
-              <div className="col-md-4 mb-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Quantity"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+        <button className="btn btn-primary">Donate</button>
+      </form>
 
-              <div className="col-md-4 mb-3">
-                <input
-                  type="datetime-local"
-                  className="form-control"
-                  placeholder="Expiry"
-                  value={formData.expiry}
-                  onChange={(e) =>
-                    setFormData({ ...formData, expiry: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-
-            <button className="btn btn-primary">Submit Donation</button>
-          </form>
-        </div>
-      </div>
-
-      {/* 🔹 Table */}
-      <div className="card shadow">
-        <div className="card-body">
-          <h5 className="mb-3">My Donations</h5>
-
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Food</th>
-                <th>Quantity</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {donations.map((donation) => (
-                <tr key={donation.id}>
-                  <td>{donation.id}</td>
-                  <td>{donation.food}</td>
-                  <td>{donation.quantity}</td>
-                  <td>
-                    <span
-                      className={`badge ${
-                        donation.status === "Collected"
-                          ? "bg-success"
-                          : "bg-warning"
-                      }`}
-                    >
-                      {donation.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* 🔹 TABLE */}
+      <table className="table mt-4">
+        <thead>
+          <tr>
+            <th>Food</th>
+            <th>Quantity</th>
+            <th>Expiry</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {donations.map((d, index) => (
+            <tr key={index}>
+              <td>{d.food}</td>
+              <td>{d.quantity}</td>
+              <td>{d.expiry}</td>
+              <td>{d.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
+}
 
 export default DonorDashboard;
