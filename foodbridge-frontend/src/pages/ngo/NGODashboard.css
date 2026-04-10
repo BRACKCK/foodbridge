@@ -1,0 +1,288 @@
+/* =========================
+   GLOBAL LAYOUT
+========================= */
+.ngo-dashboard {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+#root,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* =========================
+   HEADER
+========================= */
+.dashboard-header {
+  background: linear-gradient(135deg, #198754, #146c43);
+  color: white;
+  padding: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+
+.dashboard-subtitle {
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.dashboard-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* =========================
+   STAT CARDS
+========================= */
+.stat-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.4rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* =========================
+   DONATIONS CARD
+========================= */
+.donations-card {
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #eee;
+}
+
+.donations-card-header {
+  padding: 1.4rem;
+  border-bottom: 1px solid #eee;
+}
+
+.donations-title {
+  font-weight: 600;
+}
+
+/* =========================
+   FILTERS
+========================= */
+.donations-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.search-wrapper {
+  position: relative;
+  min-width: 200px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.search-input {
+  padding-left: 30px;
+}
+
+/* =========================
+   TABLE
+========================= */
+.donations-table {
+  width: 100%;
+}
+
+.donations-table thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #6c757d;
+  background: #f8f9fa;
+}
+
+.donations-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+/* =========================
+   DONOR
+========================= */
+.donor-info {
+  display: flex;
+  align-items: center;
+}
+
+.donor-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+}
+
+.donor-name {
+  margin-left: 0.5rem;
+  font-weight: 500;
+}
+
+/* =========================
+   EXPIRY
+========================= */
+.expiry-badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background: #f1f3f5;
+}
+
+.text-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.text-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* =========================
+   MATCH SCORE (NO INLINE STYLE)
+========================= */
+.match-score {
+  display: flex;
+  align-items: center;
+  min-width: 120px;
+}
+
+.match-progress-native {
+  flex: 1;
+  height: 6px;
+  margin-right: 0.5rem;
+  appearance: none;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #e9ecef;
+}
+
+.match-progress-native::-webkit-progress-value {
+  background: #198754;
+}
+
+.match-progress-native::-moz-progress-bar {
+  background: #198754;
+}
+
+.match-score-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* =========================
+   IMPACT
+========================= */
+.impact-badges {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.impact-badge {
+  padding: 0.25rem 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+/* =========================
+   TABLE STATES
+========================= */
+.table-warning {
+  border-left: 3px solid #ffc107;
+}
+
+.table-danger {
+  border-left: 3px solid #dc3545;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .dashboard-header-actions {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+
+  .donations-filters {
+    flex-direction: column;
+  }
+
+  .search-wrapper,
+  .filter-select,
+  .sort-select {
+    width: 100%;
+  }
+
+  .donations-table thead {
+    display: none;
+  }
+
+  .donations-table tbody tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+  }
+
+  .donations-table tbody td {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .donations-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+  }
+}

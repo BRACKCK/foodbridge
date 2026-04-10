@@ -1,0 +1,290 @@
+/* Home Container */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hero Section */
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.hero-content {
+  padding-right: 2rem;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.hero-description {
+  font-size: 1.25rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.trust-indicators {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: #6c757d;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+}
+
+/* Stats Section */
+.stats-container {
+  position: relative;
+}
+
+.stats-card {
+  border: none;
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.stats-card-body {
+  padding: 2.5rem;
+  text-align: center;
+}
+
+.heart-icon {
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #198754;
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.stat-label {
+  color: #6c757d;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.decorative-circle-1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  background-color: #198754;
+  border-radius: 50%;
+  padding: 1.5rem;
+  opacity: 0.25;
+  width: 60px;
+  height: 60px;
+  display: none;
+}
+
+.decorative-circle-2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translateY(50%);
+  background-color: #ffc107;
+  border-radius: 50%;
+  padding: 1rem;
+  opacity: 0.25;
+  width: 40px;
+  height: 40px;
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .decorative-circle-1,
+  .decorative-circle-2 {
+    display: block;
+  }
+}
+
+/* Features Section */
+.features-section {
+  padding: 4rem 0;
+  background-color: #f8f9fa;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.feature-card {
+  height: 100%;
+  border: none;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon {
+  background-color: rgba(25, 135, 84, 0.1);
+  border-radius: 50%;
+  display: inline-flex;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 3rem 0;
+  background-color: #198754;
+  color: #ffffff;
+}
+
+.cta-description {
+  opacity: 0.9;
+}
+
+/* Footer */
+.footer {
+  background-color: #212529;
+  color: #ffffff;
+  padding: 1.5rem 0;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer-copyright {
+  flex: 1;
+  text-align: left;
+}
+
+.footer-copyright p {
+  opacity: 0.75;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-link {
+  color: #ffffff;
+  opacity: 0.75;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.footer-link:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+/* Badge Styles */
+.badge {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content {
+    padding-right: 0;
+    text-align: center;
+  }
+  
+  .cta-buttons {
+    justify-content: center;
+  }
+  
+  .trust-indicators {
+    justify-content: center;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .footer-copyright {
+    text-align: center;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-description {
+    font-size: 1rem;
+  }
+  
+  .trust-indicators {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .stat-value {
+    font-size: 1.75rem;
+  }
+  
+  .features-section {
+    padding: 2rem 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .cta-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .cta-buttons .btn {
+    width: 100%;
+  }
+  
+  .footer-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
