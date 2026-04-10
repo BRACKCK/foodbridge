@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    username: "",
     password: "",
     role: "donor",
   });
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -18,12 +23,23 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    setError("");
+    setSuccess("");
 
-    // 🔌 Later: connect to Django backend
-    // axios.post("/api/register", formData)
+    try {
+      await axios.post("http://127.0.0.1:8000/api/register/", formData);
+
+      setSuccess("Registration successful. Redirecting to login...");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setError("Registration failed. Username may already exist.");
+    }
   };
 
   return (
@@ -32,78 +48,63 @@ const Register = () => {
         <div className="col-md-5">
           <div className="card shadow">
             <div className="card-body">
-              <h3 className="text-center mb-4">Create Account</h3>
+              <h3 className="text-center mb-4">Register for FoodBridge</h3>
 
               <form onSubmit={handleSubmit}>
-                {/* Name */}
                 <div className="mb-3">
-                  <label className="form-label">Full Name</label>
                   <input
                     type="text"
                     className="form-control"
-                    name="name"
-                    value={formData.name}
+                    name="username"
+                    placeholder="Enter username"
+                    value={formData.username}
                     onChange={handleChange}
-                    placeholder="Enter your full name"
                     required
                   />
                 </div>
 
-                {/* Email */}
                 <div className="mb-3">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email address"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div className="mb-3">
-                  <label className="form-label">Password</label>
                   <input
                     type="password"
                     className="form-control"
                     name="password"
+                    placeholder="Enter password"
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder="Enter your password"
                     required
                   />
                 </div>
 
-                {/* Role */}
                 <div className="mb-3">
-                  <label className="form-label">Register as</label>
+                  <label htmlFor="role" className="form-label">Role</label>
                   <select
+                    id="role"
                     className="form-select"
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    title="Select your role"
+                    required
                   >
                     <option value="donor">Donor</option>
                     <option value="ngo">NGO</option>
                     <option value="volunteer">Volunteer</option>
+                    <option value="admin">Admin</option>
                   </select>
                 </div>
 
-                {/* Submit */}
                 <button type="submit" className="btn btn-success w-100">
                   Register
                 </button>
               </form>
 
-              {/* Login Link */}
+              {error && <p className="text-danger text-center mt-3">{error}</p>}
+              {success && (
+                <p className="text-success text-center mt-3">{success}</p>
+              )}
+
               <div className="text-center mt-3">
                 <p>
-                  Already have an account?{" "}
-                  <Link to="/login">Login here</Link>
+                  Already have an account? <Link to="/login">Login here</Link>
                 </p>
               </div>
             </div>
