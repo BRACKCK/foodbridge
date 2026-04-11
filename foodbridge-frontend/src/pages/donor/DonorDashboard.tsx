@@ -47,6 +47,19 @@ function DonorDashboard() {
   const username = localStorage.getItem("username") || "User";
   const role = localStorage.getItem("role") || "";
 
+  // Get today's date in YYYY-MM-DD format for min attribute
+  const today = new Date();
+  const todayString = today.toISOString().split('T')[0];
+  
+  // Get date 7 days from now for max attribute (optional - limit expiry to 7 days)
+  const maxDate = new Date(today);
+  maxDate.setDate(today.getDate() + 30);
+  const maxDateString = maxDate.toISOString().split('T')[0];
+
+  // Get current datetime for min datetime-local
+  const now = new Date();
+  const nowString = now.toISOString().slice(0, 16);
+
   const [formData, setFormData] = useState<DonationFormData>({
     food: "",
     quantity: "",
@@ -64,6 +77,7 @@ function DonorDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showDonationForm, setShowDonationForm] = useState(false);
+  const [formErrors, setFormErrors] = useState<Partial<DonationFormData>>({});
 
   // Remove root element width constraints
   useEffect(() => {
@@ -160,19 +174,79 @@ function DonorDashboard() {
     fetchDonations();
   }, [navigate, fetchDonations]);
 
+  // Add this useEffect to set CSS custom properties for progress bars
+useEffect(() => {
+  const progressBars = document.querySelectorAll('.progress-bar[data-progress-width]');
+  progressBars.forEach((bar) => {
+    const element = bar as HTMLElement;
+    const width = element.dataset.progressWidth;
+    if (width) {
+      element.style.setProperty('--progress-width', width);
+    }
+  });
+}, [filteredDonations, stats]);
+
   useEffect(() => {
     applyFilters();
   }, [applyFilters]);
 
+  const validateForm = (): boolean => {
+    const errors: Partial<DonationFormData> = {};
+    
+    if (!formData.food.trim()) {
+      errors.food = "Food item is required";
+    }
+    
+    if (!formData.quantity.trim()) {
+      errors.quantity = "Quantity is required";
+    }
+    
+    if (!formData.expiry) {
+      errors.expiry = "Expiry date is required";
+    } else {
+      const expiryDate = new Date(formData.expiry);
+      if (expiryDate <= new Date()) {
+        errors.expiry = "Expiry date must be in the future";
+      }
+    }
+    
+    const lat = parseFloat(formData.latitude);
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+      errors.latitude = "Valid latitude required (-90 to 90)";
+    }
+    
+    const lng = parseFloat(formData.longitude);
+    if (isNaN(lng) || lng < -180 || lng > 180) {
+      errors.longitude = "Valid longitude required (-180 to 180)";
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+    
+    // Clear error for this field when user starts typing
+    if (formErrors[name as keyof DonationFormData]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: undefined,
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsSubmitting(true);
     setError(null);
 
@@ -193,6 +267,7 @@ function DonorDashboard() {
         longitude: "36.8219",
       });
       
+      setFormErrors({});
       setShowDonationForm(false);
       setSuccessMessage("Donation posted successfully! Thank you for your contribution.");
       setTimeout(() => setSuccessMessage(null), 5000);
@@ -245,6 +320,18 @@ function DonorDashboard() {
     if (daysLeft <= 1) return "urgent";
     if (daysLeft <= 3) return "warning";
     return "";
+  };
+
+  const getProgressWidth = (): string => {
+    const denominator = stats.totalPoints + stats.pointsToNextBadge || 1;
+    return `${Math.min((stats.totalPoints / denominator) * 100, 100)}%`;
+  };
+
+  // Get minimum datetime for expiry input
+  const getMinDateTime = (): string => {
+    const now = new Date();
+    now.setHours(now.getHours() + 1); // At least 1 hour from now
+    return now.toISOString().slice(0, 16);
   };
 
   return (
@@ -386,9 +473,12 @@ function DonorDashboard() {
                 <div className="progress">
                   <div
                     className="progress-bar bg-warning"
-                    style={{ width: `${Math.min((stats.totalPoints / (stats.totalPoints + stats.pointsToNextBadge || 1)) * 100, 100)}%` }}
+                    data-progress-width={getProgressWidth()}
                     role="progressbar"
-                    aria-label={`Progress to next badge`}
+                    aria-label="Progress to next badge"
+                    aria-valuenow={stats.totalPoints}
+                    aria-valuemin={0}
+                    aria-valuemax={stats.totalPoints + stats.pointsToNextBadge}
                   ></div>
                 </div>
               </div>
@@ -420,85 +510,114 @@ function DonorDashboard() {
               <form onSubmit={handleSubmit}>
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="food">
                       <i className="bi bi-tag me-1"></i>
                       Food Item
                     </label>
                     <input
+                      id="food"
                       type="text"
                       name="food"
-                      className="form-control"
+                      className={`form-control ${formErrors.food ? 'is-invalid' : ''}`}
                       placeholder="e.g., Fresh Vegetables, Bread, Rice"
                       value={formData.food}
                       onChange={handleChange}
                       required
                     />
+                    {formErrors.food && (
+                      <div className="invalid-feedback">{formErrors.food}</div>
+                    )}
                   </div>
 
                   <div className="col-md-6">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="quantity">
                       <i className="bi bi-box me-1"></i>
                       Quantity
                     </label>
                     <input
+                      id="quantity"
                       type="text"
                       name="quantity"
-                      className="form-control"
+                      className={`form-control ${formErrors.quantity ? 'is-invalid' : ''}`}
                       placeholder="e.g., 5 kg, 20 portions, 10 loaves"
                       value={formData.quantity}
                       onChange={handleChange}
                       required
                     />
+                    {formErrors.quantity && (
+                      <div className="invalid-feedback">{formErrors.quantity}</div>
+                    )}
                   </div>
 
                   <div className="col-md-4">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="expiry">
                       <i className="bi bi-calendar me-1"></i>
                       Expiry Date & Time
                     </label>
-                    <input
-                      type="datetime-local"
-                      name="expiry"
-                      placeholder="Select expiry date and time"
-                      className="form-control"
-                      value={formData.expiry}
-                      onChange={handleChange}
-                      required
-                    />
+                    <div className="expiry-input-wrapper">
+                      <input
+                        id="expiry"
+                        type="datetime-local"
+                        name="expiry"
+                        className={`form-control expiry-date-input ${formErrors.expiry ? 'is-invalid' : ''}`}
+                        value={formData.expiry}
+                        onChange={handleChange}
+                        min={getMinDateTime()}
+                        max={maxDateString + "T23:59"}
+                        required
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                      />
+                      <i className="bi bi-calendar3 calendar-icon"></i>
+                    </div>
+                    {formErrors.expiry && (
+                      <div className="invalid-feedback">{formErrors.expiry}</div>
+                    )}
+                    <small className="text-muted expiry-hint">
+                      <i className="bi bi-info-circle me-1"></i>
+                      Click the calendar icon to select date and time
+                    </small>
                   </div>
 
                   <div className="col-md-4">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="latitude">
                       <i className="bi bi-geo-alt me-1"></i>
                       Latitude
                     </label>
                     <input
+                      id="latitude"
                       type="number"
                       step="any"
                       name="latitude"
-                      className="form-control"
+                      className={`form-control ${formErrors.latitude ? 'is-invalid' : ''}`}
                       placeholder="e.g., -1.2921"
                       value={formData.latitude}
                       onChange={handleChange}
                       required
                     />
+                    {formErrors.latitude && (
+                      <div className="invalid-feedback">{formErrors.latitude}</div>
+                    )}
                   </div>
 
                   <div className="col-md-4">
-                    <label className="form-label">
+                    <label className="form-label" htmlFor="longitude">
                       <i className="bi bi-geo-alt me-1"></i>
                       Longitude
                     </label>
                     <input
+                      id="longitude"
                       type="number"
                       step="any"
                       name="longitude"
-                      className="form-control"
+                      className={`form-control ${formErrors.longitude ? 'is-invalid' : ''}`}
                       placeholder="e.g., 36.8219"
                       value={formData.longitude}
                       onChange={handleChange}
                       required
                     />
+                    {formErrors.longitude && (
+                      <div className="invalid-feedback">{formErrors.longitude}</div>
+                    )}
                   </div>
 
                   <div className="col-12">
@@ -632,7 +751,7 @@ function DonorDashboard() {
                               <div className="progress match-progress">
                                 <div
                                   className="progress-bar bg-success"
-                                  style={{ width: `${donation.match_score}%` }}
+                                  data-progress-width={`${donation.match_score}%`}
                                   role="progressbar"
                                   aria-label={`Match score ${donation.match_score} percent`}
                                 ></div>
