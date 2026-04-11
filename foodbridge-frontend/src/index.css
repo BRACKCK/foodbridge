@@ -50,22 +50,39 @@
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+/* ─── Reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+/* ─── Root wrapper ───────────────────────────────────────── */
+/*
+  We remove the fixed 1126 px width so every page can be full-width.
+  The centred-column look is now the responsibility of each page/dashboard
+  via Bootstrap's .container / .container-fluid.
+*/
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* No border-inline so it truly fills the screen */
+}
+
+/* ─── Typography ─────────────────────────────────────────── */
 h1,
 h2 {
   font-family: var(--heading);
@@ -82,6 +99,7 @@ h1 {
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -91,6 +109,7 @@ h2 {
     font-size: 20px;
   }
 }
+
 p {
   margin: 0;
 }
@@ -108,4 +127,33 @@ code {
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
+}
+
+/* ─── Page fill helper ───────────────────────────────────── */
+/*
+  Add class="page-fill" to any top-level page wrapper that should
+  stretch to fill the remaining vertical space below the Navbar.
+  Works for Home, Login, Register, and all dashboards.
+*/
+.page-fill {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* prevent flex overflow */
+}
+
+/* Login / Register centred cards */
+.auth-page {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  min-height: calc(100svh - 56px); /* subtract approx navbar height */
+}
+
+/* Dashboard pages that use Bootstrap .container */
+.dashboard-page {
+  flex: 1 0 auto;
+  width: 100%;
 }
