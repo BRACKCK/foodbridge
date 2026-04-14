@@ -194,12 +194,7 @@ const Home = () => {
               Start Today
               <i className="bi bi-arrow-right ms-2"></i>
             </Link>
-            <Link 
-              to="/about" 
-              className="btn btn-outline-light btn-lg px-5 py-3 fw-semibold"
-            >
-              Learn More
-            </Link>
+           
           </div>
         </div>
       </section>
@@ -210,7 +205,7 @@ const Home = () => {
           <div className="footer-content">
             <div className="footer-copyright">
               <p className="mb-0">
-                &copy; 2024 FoodBridge. All rights reserved.
+                &copy; 2026 FoodBridge. All rights reserved.
               </p>
             </div>
             <div className="footer-links">

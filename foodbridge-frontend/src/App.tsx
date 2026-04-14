@@ -8,6 +8,8 @@ import DonorDashboard from "./pages/donor/DonorDashboard";
 import NGODashboard from "./pages/ngo/NGODashboard";
 import VolunteerDashboard from "./pages/volunteer/VolunteerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
 
 /**
  * PageShell wraps every route's content so it stretches to fill the
@@ -70,6 +72,22 @@ function App() {
           element={
             <PageShell>
               <VolunteerDashboard />
+            </PageShell>
+          }
+        />
+        <Route
+          path="/payment/success"
+          element={
+            <PageShell>
+              <PaymentSuccess />
+            </PageShell>
+          }
+        />
+        <Route
+          path="/payment/cancel"
+          element={
+            <PageShell>
+              <PaymentCancel />
             </PageShell>
           }
         />

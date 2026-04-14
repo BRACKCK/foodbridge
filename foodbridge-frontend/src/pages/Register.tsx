@@ -3,9 +3,7 @@ import type { FormEvent, ChangeEvent } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-/* ─────────────────────────────────────────────────────────────
-   Types
-───────────────────────────────────────────────────────────── */
+
 type Step = "form" | "otp";
 
 interface RegisterFormData {
@@ -15,9 +13,7 @@ interface RegisterFormData {
   role: "donor" | "ngo" | "volunteer" | "admin";
 }
 
-/* ─────────────────────────────────────────────────────────────
-   Component
-───────────────────────────────────────────────────────────── */
+
 const Register = () => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";

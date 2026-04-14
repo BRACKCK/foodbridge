@@ -28,6 +28,7 @@ class Donation(models.Model):
         return f"{self.food} - {self.owner.username}"
 
 
+
 class Notification(models.Model):
     ROLE_CHOICES = (
         ("donor", "Donor"),
@@ -43,3 +44,39 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.role}: {self.message[:40]}"
+    
+class MoneyDonation(models.Model):
+    STATUS_CHOICES = (
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+        ("failed", "Failed"),
+        ("refunded", "Refunded"),
+    )
+
+    donor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="money_donations"
+    )
+    ngo = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="received_money_donations",
+        limit_choices_to={"role": "ngo"}
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=10, default="USD")
+    payment_status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+    paypal_order_id = models.CharField(max_length=255, blank=True, null=True)
+    paypal_capture_id = models.CharField(max_length=255, blank=True, null=True)
+    message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.donor.username} → {self.ngo.username if self.ngo else 'N/A'} | ${self.amount}"
