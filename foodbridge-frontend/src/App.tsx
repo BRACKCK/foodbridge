@@ -10,12 +10,8 @@ import VolunteerDashboard from "./pages/volunteer/VolunteerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
+import ProfilePageWrapper from "./pages/ProfilePageWrapper";
 
-/**
- * PageShell wraps every route's content so it stretches to fill the
- * remaining vertical space below the Navbar. The Navbar itself is
- * always rendered at the top, so the shell only needs flex: 1.
- */
 const PageShell = ({ children }: { children: React.ReactNode }) => (
   <main className="page-fill">{children}</main>
 );
@@ -23,82 +19,19 @@ const PageShell = ({ children }: { children: React.ReactNode }) => (
 function App() {
   return (
     <Router>
-      {/* Navbar sits outside the scroll area — always visible at top */}
       <Navbar />
 
       <Routes>
-        <Route
-          path="/"
-          element={
-            <PageShell>
-              <Home />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <PageShell>
-              <Login />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PageShell>
-              <Register />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/donor-dashboard"
-          element={
-            <PageShell>
-              <DonorDashboard />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/ngo-dashboard"
-          element={
-            <PageShell>
-              <NGODashboard />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/volunteer-dashboard"
-          element={
-            <PageShell>
-              <VolunteerDashboard />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/payment/success"
-          element={
-            <PageShell>
-              <PaymentSuccess />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/payment/cancel"
-          element={
-            <PageShell>
-              <PaymentCancel />
-            </PageShell>
-          }
-        />
-        <Route
-          path="/admin-dashboard"
-          element={
-            <PageShell>
-              <AdminDashboard />
-            </PageShell>
-          }
-        />
+        <Route path="/" element={<PageShell><Home /></PageShell>} />
+        <Route path="/login" element={<PageShell><Login /></PageShell>} />
+        <Route path="/register" element={<PageShell><Register /></PageShell>} />
+        <Route path="/profile" element={<PageShell><ProfilePageWrapper /></PageShell>} />
+        <Route path="/donor-dashboard" element={<PageShell><DonorDashboard /></PageShell>} />
+        <Route path="/ngo-dashboard" element={<PageShell><NGODashboard /></PageShell>} />
+        <Route path="/volunteer-dashboard" element={<PageShell><VolunteerDashboard /></PageShell>} />
+        <Route path="/payment/success" element={<PageShell><PaymentSuccess /></PageShell>} />
+        <Route path="/payment/cancel" element={<PageShell><PaymentCancel /></PageShell>} />
+        <Route path="/admin-dashboard" element={<PageShell><AdminDashboard /></PageShell>} />
       </Routes>
     </Router>
   );

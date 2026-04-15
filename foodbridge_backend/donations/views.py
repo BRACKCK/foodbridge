@@ -34,7 +34,6 @@ def calculate_match_score(expiry, quantity, status_value):
 
 def calculate_points(quantity):
     quantity_str = str(quantity).lower()
-
     if any(x in quantity_str for x in ["50", "100", "large", "many", "bulk"]):
         return 50
     elif any(x in quantity_str for x in ["20", "25", "30"]):
@@ -54,7 +53,6 @@ def calculate_badge(total_points):
 
 def calculate_impact(quantity):
     quantity_str = str(quantity).lower()
-
     if "kg" in quantity_str:
         try:
             number = float(quantity_str.replace("kg", "").strip())
@@ -68,7 +66,6 @@ def calculate_impact(quantity):
 
     meals_saved = max(1, int(number * 2))
     co2_saved = round(number * 2.5, 2)
-
     return meals_saved, co2_saved
 
 
@@ -101,11 +98,8 @@ def donation_list(request):
             donation = serializer.save(owner=user)
 
             donation.match_score = calculate_match_score(
-                donation.expiry,
-                donation.quantity,
-                donation.status
+                donation.expiry, donation.quantity, donation.status
             )
-
             donation.points = calculate_points(donation.quantity)
 
             meals_saved, co2_saved = calculate_impact(donation.quantity)
@@ -140,29 +134,18 @@ def update_donation_status(request, donation_id):
     try:
         donation = Donation.objects.get(id=donation_id)
     except Donation.DoesNotExist:
-        return Response(
-            {"error": "Donation not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "Donation not found"}, status=status.HTTP_404_NOT_FOUND)
 
     if user.role == "donor" and donation.owner != user:
-        return Response(
-            {"error": "Forbidden"},
-            status=status.HTTP_403_FORBIDDEN
-        )
+        return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
     new_status = request.data.get("status")
     if not new_status:
-        return Response(
-            {"error": "Status is required"},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({"error": "Status is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     donation.status = new_status
     donation.match_score = calculate_match_score(
-        donation.expiry,
-        donation.quantity,
-        donation.status
+        donation.expiry, donation.quantity, donation.status
     )
     donation.save()
 
@@ -175,13 +158,11 @@ def update_donation_status(request, donation_id):
             role="donor",
             message=f"Your donation was accepted by an NGO: {donation.food}"
         )
-
     elif new_status == "Collected":
         Notification.objects.create(
             role="donor",
             message=f"Your donation has been collected: {donation.food}"
         )
-
     elif new_status == "Delivered":
         Notification.objects.create(
             role="donor",
@@ -199,7 +180,6 @@ def update_donation_status(request, donation_id):
 @api_view(["GET"])
 def notification_list(request):
     role = request.GET.get("role")
-
     if role:
         notifications = Notification.objects.filter(role=role).order_by("-created_at")
     else:
@@ -214,13 +194,33 @@ def mark_notification_read(request, notification_id):
     try:
         notification = Notification.objects.get(id=notification_id)
     except Notification.DoesNotExist:
-        return Response(
-            {"error": "Notification not found"},
-            status=status.HTTP_404_NOT_FOUND
-        )
+        return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
 
     notification.is_read = True
     notification.save()
 
     serializer = NotificationSerializer(notification)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+def delete_notification(request, notification_id):
+    """Delete a single notification."""
+    try:
+        notification = Notification.objects.get(id=notification_id)
+    except Notification.DoesNotExist:
+        return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    notification.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["DELETE"])
+def delete_all_notifications(request):
+    """Delete all notifications for the requesting user's role."""
+    role = request.GET.get("role")
+    if role:
+        Notification.objects.filter(role=role).delete()
+    else:
+        Notification.objects.all().delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

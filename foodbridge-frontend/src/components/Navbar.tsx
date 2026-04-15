@@ -16,16 +16,11 @@ const Navbar = () => {
 
   const getDashboardPath = () => {
     switch (role) {
-      case "donor":
-        return "/donor-dashboard";
-      case "ngo":
-        return "/ngo-dashboard";
-      case "volunteer":
-        return "/volunteer-dashboard";
-      case "admin":
-        return "/admin-dashboard";
-      default:
-        return "/";
+      case "donor":     return "/donor-dashboard";
+      case "ngo":       return "/ngo-dashboard";
+      case "volunteer": return "/volunteer-dashboard";
+      case "admin":     return "/admin-dashboard";
+      default:          return "/";
     }
   };
 
@@ -50,15 +45,21 @@ const Navbar = () => {
 
         <div className="collapse navbar-collapse" id="foodbridgeNavbar">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {token && (
-              <li className="nav-item">
-                <Link className="nav-link" to={getDashboardPath()}>
-                  Dashboard
-                </Link>
-              </li>
-            )}
-
-            {!token && (
+            {token ? (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to={getDashboardPath()}>
+                    Dashboard
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/profile">
+                    <i className="bi bi-person-circle me-1" />
+                    Profile
+                  </Link>
+                </li>
+              </>
+            ) : (
               <li className="nav-item">
                 <Link className="nav-link" to="/">
                   Home
@@ -79,10 +80,13 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <span className="text-light me-3">
-                  {username} ({role})
+                <span className="text-light me-3 small">
+                  <i className="bi bi-person-fill me-1" />
+                  {username}{" "}
+                  <span className="opacity-75">({role})</span>
                 </span>
-                <button onClick={handleLogout} className="btn btn-danger">
+                <button onClick={handleLogout} className="btn btn-danger btn-sm">
+                  <i className="bi bi-box-arrow-right me-1" />
                   Logout
                 </button>
               </>

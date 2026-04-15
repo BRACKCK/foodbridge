@@ -4,6 +4,8 @@ from .views import (
     update_donation_status,
     notification_list,
     mark_notification_read,
+    delete_notification,
+    delete_all_notifications,
 )
 from .paypal_views import (
     ngo_list,
@@ -17,8 +19,12 @@ urlpatterns = [
     # Food donations
     path("", donation_list, name="donation_list"),
     path("<int:donation_id>/status/", update_donation_status, name="update_donation_status"),
+
+    # Notifications
     path("notifications/", notification_list, name="notification_list"),
+    path("notifications/delete-all/", delete_all_notifications, name="delete_all_notifications"),
     path("notifications/<int:notification_id>/read/", mark_notification_read, name="mark_notification_read"),
+    path("notifications/<int:notification_id>/delete/", delete_notification, name="delete_notification"),
 
     # Money donations
     path("ngos/", ngo_list, name="ngo_list"),
