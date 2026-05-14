@@ -1,4 +1,4 @@
-
+# paypal_client.py
 from django.conf import settings
 from paypalserversdk.configuration import Environment
 from paypalserversdk.http.auth.o_auth_2 import ClientCredentialsAuthCredentials

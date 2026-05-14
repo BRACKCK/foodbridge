@@ -1,3 +1,5 @@
+
+# settings.py
 """
 Django settings for foodbridge_backend project.
 
